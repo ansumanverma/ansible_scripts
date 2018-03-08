@@ -1,0 +1,17 @@
+- hosts: localhost
+
+  vars:
+    jenkins_version: "2.73.1"
+    jenkins_url: http://127.0.0.1
+    jenkins_port: 8080
+    jenkins_install_via: "apt"
+    jenkins_jobs:
+        - "HelloWordApp_Build"
+        - "HelloWorldApp_Deploy"
+    jenkins_include_secrets: true
+    jenkins_include_custom_files: true
+    jenkins_custom_files:
+      - src: "credentials.xml"
+        dest: "credentials.xml"
+  roles:
+    - jenkins

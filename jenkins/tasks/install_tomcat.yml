@@ -1,0 +1,72 @@
+# Setup maven
+---
+
+- name: add group "tomcat"
+  group: name=tomcat
+
+- name: add user "tomcat"
+  user: name=tomcat group=tomcat home=/usr/share/tomcat createhome=no
+  become: true
+  become_method: sudo
+
+- name: Download Tomcat
+  get_url: url=http://www-us.apache.org/dist/tomcat/tomcat-9/v9.0.5/bin/apache-tomcat-9.0.5.tar.gz dest=/opt/apache-tomcat-9.0.5.tar.gz
+  become: true
+  become_method: sudo
+
+- name: Extract Tomcat archive
+  command: tar zxvf /opt/apache-tomcat-9.0.5.tar.gz -C /opt/ creates=/opt/apache-tomcat-9.0.5
+  become: true
+  become_method: sudo
+
+- name: Remove symlink
+  file:
+   path: "/usr/share/tomcat"
+   state: absent
+  become: true
+  become_method: sudo
+
+
+- name: Symlink install directory
+  file: src=/opt/apache-tomcat-9.0.5 path=/usr/share/tomcat owner=tomcat group=tomcat state=link
+  become: true
+  become_method: sudo
+
+
+- name: Change ownership of Tomcat installation
+  file: path=/opt/apache-tomcat-9.0.5 owner=tomcat group=tomcat state=directory recurse=yes
+  become: true
+  become_method: sudo
+
+- name: Configure Tomcat server
+  template: src=server.xml dest=/opt/apache-tomcat-9.0.5/conf/
+  become: true
+  become_method: sudo
+
+- name: Configure Tomcat users
+  template: src=tomcat-users.xml dest=/opt/apache-tomcat-9.0.5/conf/
+  become: true
+  become_method: sudo
+
+- name: Configure Tomcat users
+  template: src=context.xml dest=/opt/apache-tomcat-9.0.5/webapps/host-manager/META-INF
+  become: true
+  become_method: sudo
+
+- name: Configure Tomcat users
+  template: src=context.xml dest=/opt/apache-tomcat-9.0.5/webapps/manager/META-INF
+  become: true
+  become_method: sudo
+
+- name: Install Tomcat init script
+  copy: src=tomcat-initscript.sh dest=/etc/init.d/tomcat mode=0755
+  become: true
+  become_method: sudo
+
+- name: Start Tomcat
+  command: /opt/apache-tomcat-9.0.5/bin/startup.sh
+  sudo: true
+  sudo_user: tomcat
+
+- name: wait for tomcat to start
+  wait_for: port={{http_port}}
