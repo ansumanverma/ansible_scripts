@@ -64,9 +64,15 @@
   become_method: sudo
 
 - name: Start Tomcat
-  command: /opt/apache-tomcat-9.0.5/bin/startup.sh
-  sudo: true
-  sudo_user: tomcat
+ # command: /opt/apache-tomcat-9.0.5/bin/startup.sh
+  command: /etc/init.d/tomcat start
+ # sudo: true
+ # sudo_user: tomcat
+  register: output
+
+- debug: msg="{{ output.stdout }}"
+
+- debug: msg="{{ output.stderr }}"
 
 - name: wait for tomcat to start
   wait_for: port={{http_port}}

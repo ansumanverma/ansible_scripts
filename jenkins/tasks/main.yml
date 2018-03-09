@@ -6,6 +6,11 @@
 
 # Jenkins should not be running while we change the configuration
 # data, otherwise some files might be overwritten when it restarts
+
+- include: prerequisites.yml
+
+- include: setup.yml
+
 - include: "{{ jenkins_install_via }}/stop.yml"
 - include: "configure-jenkins.yml"
 
@@ -19,7 +24,3 @@
 
 - include: "configure-jobs.yml"
 - include: "{{ jenkins_after_config_jobs_file | default('empty.yml') }}"
-
-- include: prerequisites.yml
-
-- include: setup.yml

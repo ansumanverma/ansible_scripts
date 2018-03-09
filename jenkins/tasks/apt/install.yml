@@ -3,6 +3,17 @@
   group:
     name: "{{ jenkins_config_group }}"
     state: present
+  become: true
+  become_method: sudo
+
+- name: Creates directory
+  file:
+    path: "{{ jenkins_home }}"
+    state: directory
+    mode: 0775
+    recurse: yes
+  become: true
+  become_method: sudo
 
 - name: Create Jenkins user
   user:
@@ -11,6 +22,17 @@
     home: "{{ jenkins_home }}"
     shell: "/bin/false"
     state: present
+  become: true
+  become_method: sudo
+
+- file:
+    path: "{{ jenkins_home }}"
+    owner: "{{ jenkins_config_owner }}"
+    group: "{{ jenkins_config_group }}"
+    mode: 0644
+  become: true
+  become_method: sudo
+
 
 - name: Install apt PPA dependencies
   apt:
