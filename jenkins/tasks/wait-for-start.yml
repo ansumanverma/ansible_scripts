@@ -1,14 +1,8 @@
 ---
 
-- pause: seconds=60
 - name: Wait for Jenkins to start
-  uri:
-    url: "{{ jenkins_url }}:{{ jenkins_port }}"
-  delegate_to: localhost
-  become: false
-  register: jenkins_home_content
-  # Jenkins will return 503 (service unavailable) on the home page while
-  # starting (the "Please wait while Jenkins is getting ready to work" page)
-  until: jenkins_home_content.status == 200
+  shell: curl --head --silent http://localhost:8080/cli/
+  register: result
+  until: result.stdout.find("200 OK") != -1
   retries: 30
   delay: 5
