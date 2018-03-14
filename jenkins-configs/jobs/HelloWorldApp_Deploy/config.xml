@@ -39,7 +39,7 @@
       <doNotFingerprintArtifacts>false</doNotFingerprintArtifacts>
     </hudson.plugins.copyartifact.CopyArtifact>
     <hudson.tasks.Maven>
-      <targets>tomcat7:deploy-only -e</targets>
+      <targets>tomcat7:redeploy-only -e</targets>
       <pom>HelloWorldApp/pom.xml</pom>
       <usePrivateRepository>true</usePrivateRepository>
       <settings class="jenkins.mvn.DefaultSettingsProvider"/>
